@@ -164,7 +164,7 @@ namespace VkNet.Categories
 		}
 
 		/// <inheritdoc />
-		public ConversationResultObject GetConversationsById(IEnumerable<long> peerIds, IEnumerable<string> fields, bool? extended = null,
+		public ConversationResultObject GetConversationsById(IEnumerable<long> peerIds, IEnumerable<string> fields = null, bool? extended = null,
 															ulong? groupId = null)
 		{
 			return _vk.Call<ConversationResultObject>("messages.getConversationsById",
@@ -561,7 +561,7 @@ namespace VkNet.Categories
 			var result = _vk.Call("messages.setChatPhoto", parameters);
 			messageId = result["message_id"];
 
-			return result["chat"];
+			return result["chat"]["id"];
 		}
 
 		/// <inheritdoc />

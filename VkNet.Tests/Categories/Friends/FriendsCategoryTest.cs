@@ -23,18 +23,7 @@ namespace VkNet.Tests.Categories
 			Url = "https://api.vk.com/method/friends.add";
 			ReadJsonFile(JsonPaths.True);
 
-			var status = Api.Friends.Add(242508, "hello, user!");
-
-			Assert.That(status, Is.EqualTo(AddFriendStatus.Sended));
-		}
-
-		[Test]
-		public void Add_WithCaptcha_NormalCase()
-		{
-			Url = "https://api.vk.com/method/friends.add";
-			ReadJsonFile(JsonPaths.True);
-
-			var status = Api.Friends.Add(242508, "hello, user!", captchaSid: 1247329, captchaKey: "hug2z");
+			var status = Api.Friends.Add(242508, "hello, user!", false);
 
 			Assert.That(status, Is.EqualTo(AddFriendStatus.Sended));
 		}
@@ -65,21 +54,22 @@ namespace VkNet.Tests.Categories
 			var id = Api.Friends.AddList("тестовая метка",
 				new long[]
 				{
-					1, 2
+					1,
+					2
 				});
 
 			Assert.That(id, Is.EqualTo(2));
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void AreFriends_EmptyAccessToken_ThrowAccessTokenInvalidException()
 		{
 			var cat = new FriendsCategory(new VkApi());
 
 			Assert.That(() => cat.AreFriends(new long[]
 				{
-					2, 3
+					2,
+					3
 				}),
 				Throws.InstanceOf<AccessTokenInvalidException>());
 		}
@@ -92,7 +82,10 @@ namespace VkNet.Tests.Categories
 
 			var dict = Api.Friends.AreFriends(new long[]
 			{
-				24181068, 22911407, 155810539, 3505305
+				24181068,
+				22911407,
+				155810539,
+				3505305
 			});
 
 			Assert.NotNull(dict);
@@ -156,7 +149,11 @@ namespace VkNet.Tests.Categories
 			Url = "https://api.vk.com/method/friends.edit";
 			ReadJsonFile(JsonPaths.True);
 
-			var result = Api.Friends.Edit(242508111, new long[] { 2 });
+			var result = Api.Friends.Edit(242508111,
+				new long[]
+				{
+					2
+				});
 
 			Assert.That(result, Is.True);
 		}
@@ -179,7 +176,6 @@ namespace VkNet.Tests.Categories
 		}
 
 		[Test]
-		[Ignore("Этот метод можно вызвать без ключа доступа. Возвращаются только общедоступные данные.")]
 		public void Get_EmptyAccessToken_ThrowAccessTokenInvalidException()
 		{
 			var cat = new FriendsCategory(new VkApi());
@@ -199,7 +195,9 @@ namespace VkNet.Tests.Categories
 
 			var lst = Api.Friends.Get(new FriendsGetParams
 			{
-				Count = 3, Fields = ProfileFields.FirstName|ProfileFields.LastName, UserId = 1
+				Count = 3,
+				Fields = ProfileFields.FirstName|ProfileFields.LastName,
+				UserId = 1
 			});
 
 			Assert.That(lst.Count, Is.EqualTo(3));
@@ -240,7 +238,6 @@ namespace VkNet.Tests.Categories
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void GetAppUsers_EmptyAccessToken_ThrowAccessTokenInvalidException()
 		{
 			var cat = new FriendsCategory(new VkApi());
@@ -290,14 +287,14 @@ namespace VkNet.Tests.Categories
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void GetMutual_EmptyAccessToken_ThrowAccessTokenInvalidException()
 		{
 			var category = new FriendsCategory(new VkApi());
 
 			Assert.That(() => category.GetMutual(new FriendsGetMutualParams
 				{
-					TargetUid = 2, SourceUid = 3
+					TargetUid = 2,
+					SourceUid = 3
 				}),
 				Throws.InstanceOf<AccessTokenInvalidException>());
 		}
@@ -310,7 +307,8 @@ namespace VkNet.Tests.Categories
 
 			var users = Api.Friends.GetMutual(new FriendsGetMutualParams
 				{
-					TargetUid = 2, SourceUid = 1
+					TargetUid = 2,
+					SourceUid = 1
 				})
 				.ToList();
 
@@ -325,7 +323,8 @@ namespace VkNet.Tests.Categories
 
 			var ids = Api.Friends.GetMutual(new FriendsGetMutualParams
 				{
-					TargetUid = 2, SourceUid = 1
+					TargetUid = 2,
+					SourceUid = 1
 				})
 				.ToList();
 
@@ -333,7 +332,6 @@ namespace VkNet.Tests.Categories
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void GetOnline_EmptyAccessToken_ThrowAccessTokenInvalidException()
 		{
 			var cat = new FriendsCategory(new VkApi());
@@ -414,7 +412,10 @@ namespace VkNet.Tests.Categories
 
 			var ids = Api.Friends.GetRequests(new FriendsGetRequestsParams
 			{
-				Offset = 0, Count = 3, Extended = false, NeedMutual = false
+				Offset = 0,
+				Count = 3,
+				Extended = false,
+				NeedMutual = false
 			});
 
 			Assert.That(ids, Is.Not.Null);
@@ -431,7 +432,10 @@ namespace VkNet.Tests.Categories
 
 			var ids = Api.Friends.GetRequestsExtended(new FriendsGetRequestsParams
 			{
-				Offset = 0, Count = 3, Extended = true, NeedMutual = true
+				Offset = 0,
+				Count = 3,
+				Extended = true,
+				NeedMutual = true
 			});
 
 			Assert.That(ids, Is.Not.Null);
@@ -446,7 +450,8 @@ namespace VkNet.Tests.Categories
 
 			var ids = Api.Friends.GetRequests(new FriendsGetRequestsParams
 			{
-				Offset = 0, Count = 3
+				Offset = 0,
+				Count = 3
 			});
 
 			Assert.That(ids, Is.Not.Null);
@@ -461,7 +466,10 @@ namespace VkNet.Tests.Categories
 
 			var ids = Api.Friends.GetRequestsExtended(new FriendsGetRequestsParams
 			{
-				Offset = 0, Count = 3, Extended = true, NeedMutual = true
+				Offset = 0,
+				Count = 3,
+				Extended = true,
+				NeedMutual = true
 			});
 
 			Assert.That(ids, Is.Not.Null);

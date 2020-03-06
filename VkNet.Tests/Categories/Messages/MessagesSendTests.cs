@@ -4,9 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using VkNet.Categories;
+using VkNet.Enums.SafetyEnums;
 using VkNet.Exception;
+using VkNet.Model.Keyboard;
 using VkNet.Model.RequestParams;
-using VkNet.Tests.Infrastructure;
+using VkNet.Model.Template;
+using VkNet.Model.Template.Carousel;
 
 namespace VkNet.Tests.Categories.Messages
 {
@@ -15,7 +18,6 @@ namespace VkNet.Tests.Categories.Messages
 	public class MessagesSendTests : MessagesBaseTests
 	{
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			var cat = new MessagesCategory(new VkApi());
@@ -37,7 +39,10 @@ namespace VkNet.Tests.Categories.Messages
 
 			var id = Api.Messages.Send(new MessagesSendParams
 			{
-				UserId = 7550525, Message = "г. Таганрог, ул. Фрунзе 66А", Lat = 47.217451, Longitude = 38.922743,
+				UserId = 7550525,
+				Message = "г. Таганрог, ул. Фрунзе 66А",
+				Lat = 47.217451,
+				Longitude = 38.922743,
 				RandomId = 1
 			});
 
@@ -52,7 +57,8 @@ namespace VkNet.Tests.Categories.Messages
 
 			var id = Api.Messages.Send(new MessagesSendParams
 			{
-				UserId = 7550525, Message = "Test from vk.net ;) # 2",
+				UserId = 7550525,
+				Message = "Test from vk.net ;) # 2",
 				RandomId = 1
 			});
 
@@ -64,7 +70,8 @@ namespace VkNet.Tests.Categories.Messages
 		{
 			Assert.That(() => Api.Messages.Send(new MessagesSendParams
 				{
-					UserId = 7550525, Message = ""
+					UserId = 7550525,
+					Message = ""
 				}),
 				Throws.InstanceOf<ArgumentException>());
 		}
@@ -77,7 +84,10 @@ namespace VkNet.Tests.Categories.Messages
 
 			Assert.That(() => Api.Messages.Send(new MessagesSendParams
 				{
-					UserId = 7550525, Message = "г. Таганрог, ул. Фрунзе 66А", Lat = 47.217451, Longitude = 38.922743,
+					UserId = 7550525,
+					Message = "г. Таганрог, ул. Фрунзе 66А",
+					Lat = 47.217451,
+					Longitude = 38.922743,
 					RandomId = 1
 				}),
 				Throws.InstanceOf<MessageIsTooLongException>());
@@ -91,10 +101,49 @@ namespace VkNet.Tests.Categories.Messages
 
 			Assert.That(() => Api.Messages.Send(new MessagesSendParams
 				{
-					UserId = 7550525, Message = "г. Таганрог, ул. Фрунзе 66А", Lat = 47.217451, Longitude = 38.922743,
+					UserId = 7550525,
+					Message = "г. Таганрог, ул. Фрунзе 66А",
+					Lat = 47.217451,
+					Longitude = 38.922743,
 					RandomId = 1
 				}),
 				Throws.InstanceOf<TooMuchSentMessagesException>());
+		}
+
+		[Test]
+		public void MessagesSend_RandomIdNotRequiredInLessThan_5_90_ArgumentException()
+		{
+			Url = "https://api.vk.com/method/messages.send";
+			ReadCategoryJsonPath(nameof(MessagesSend_RandomIdNotRequiredInLessThan_5_90_ArgumentException));
+
+			Api.VkApiVersion.SetVersion(5, 88);
+
+			var id = Api.Messages.Send(new MessagesSendParams
+			{
+				UserId = 7550525,
+				Message = "Работает # 2 --  еще разок"
+			});
+
+			Assert.That(id, Is.EqualTo(4464));
+		}
+
+		[Test]
+		public void MessagesSend_RandomIdRequired_ArgumentException()
+		{
+			Url = "https://api.vk.com/method/messages.send";
+			ReadCategoryJsonPath(nameof(MessagesSend_RandomIdRequired_ArgumentException));
+
+			Assert.That(() => Api.Messages.Send(new MessagesSendParams
+				{
+					UserIds = new List<long>
+					{
+						7550525
+					},
+					Message = "г. Таганрог, ул. Фрунзе 66А",
+					Lat = 47.217451,
+					Longitude = 38.922743
+				}),
+				Throws.InstanceOf<ArgumentException>());
 		}
 
 		[Test]
@@ -105,7 +154,13 @@ namespace VkNet.Tests.Categories.Messages
 
 			Assert.That(() => Api.Messages.Send(new MessagesSendParams
 				{
-					UserIds = new List<long> { 7550525 }, Message = "г. Таганрог, ул. Фрунзе 66А", Lat = 47.217451, Longitude = 38.922743
+					UserIds = new List<long>
+					{
+						7550525
+					},
+					Message = "г. Таганрог, ул. Фрунзе 66А",
+					Lat = 47.217451,
+					Longitude = 38.922743
 				}),
 				Throws.InstanceOf<ArgumentException>());
 		}
@@ -118,7 +173,13 @@ namespace VkNet.Tests.Categories.Messages
 
 			var result = Api.Messages.SendToUserIds(new MessagesSendParams
 			{
-				UserIds = new List<long> { 7550525 }, Message = "г. Таганрог, ул. Фрунзе 66А", Lat = 47.217451, Longitude = 38.922743
+				UserIds = new List<long>
+				{
+					7550525
+				},
+				Message = "г. Таганрог, ул. Фрунзе 66А",
+				Lat = 47.217451,
+				Longitude = 38.922743
 			});
 
 			Assert.IsNotEmpty(result);
@@ -136,7 +197,8 @@ namespace VkNet.Tests.Categories.Messages
 
 			var id = Api.Messages.Send(new MessagesSendParams
 			{
-				UserId = 7550525, Message = "Работает # 2 --  еще разок",
+				UserId = 7550525,
+				Message = "Работает # 2 --  еще разок",
 				RandomId = 1
 			});
 
@@ -144,29 +206,55 @@ namespace VkNet.Tests.Categories.Messages
 		}
 
 		[Test]
-		public void MessagesSend_RandomIdRequired_ArgumentException()
+		public void Template_Carousel()
 		{
 			Url = "https://api.vk.com/method/messages.send";
-			ReadCategoryJsonPath(nameof(MessagesSend_RandomIdRequired_ArgumentException));
+			ReadCategoryJsonPath(nameof(Template_Carousel));
 
-			Assert.That(() => Api.Messages.Send(new MessagesSendParams
+			var button = new MessageKeyboardButton
+			{
+				Color = KeyboardButtonColor.Primary,
+				Action = new MessageKeyboardButtonAction
 				{
-					UserIds = new List<long> { 7550525 }, Message = "г. Таганрог, ул. Фрунзе 66А", Lat = 47.217451, Longitude = 38.922743
-				}),
-				Throws.InstanceOf<ArgumentException>());
-		}
+					Type = KeyboardButtonActionType.Text,
+					Label = "Label"
+				}
+			};
 
-		[Test]
-		public void MessagesSend_RandomIdNotRequiredInLessThan_5_90_ArgumentException()
-		{
-			Url = "https://api.vk.com/method/messages.send";
-			ReadCategoryJsonPath(nameof(MessagesSend_RandomIdNotRequiredInLessThan_5_90_ArgumentException));
+			var buttons = new[]
+			{
+				button
+			};
 
-			Api.VkApiVersion.SetVersion(5, 88);
+			var carouselAction = new CarouselElementAction()
+			{
+				Link = new Uri("https://vk.com/"),
+				Type = CarouselElementActionType.OpenLink
+			};
+
+			var carousel = new CarouselElement
+			{
+				Description = "Desc",
+				Action = carouselAction,
+				Buttons = buttons,
+				PhotoId = "-126102803_425491011",
+				Title = "Title"
+			};
+
+			var templateElements = new[] { carousel };
+
+			var template = new MessageTemplate
+			{
+				Type = TemplateType.Carousel,
+				Elements = templateElements
+			};
 
 			var id = Api.Messages.Send(new MessagesSendParams
 			{
-				UserId = 7550525, Message = "Работает # 2 --  еще разок"
+				UserId = 7550525,
+				Message = "Работает # 2 --  еще разок",
+				RandomId = 1,
+				Template = template
 			});
 
 			Assert.That(id, Is.EqualTo(4464));

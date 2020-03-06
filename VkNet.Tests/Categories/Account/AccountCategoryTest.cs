@@ -20,7 +20,6 @@ namespace VkNet.Tests.Categories.Account
 		protected override string Folder => "Account";
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void BanUser_AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			// TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки
@@ -45,22 +44,6 @@ namespace VkNet.Tests.Categories.Account
 		}
 
 		[Test]
-		[Ignore("Будет переписываться")]
-		public void BanUser_IncorrectUserID_ThrowArgumentException()
-		{
-			// TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки
-			var account = new AccountCategory(Api);
-
-			// ReSharper disable AssignNullToNotNullAttribute
-			Assert.That(() => account.BanUser(-10), Throws.InstanceOf<ArgumentException>().And.Property("ParamName").EqualTo("userId"));
-
-			Assert.That(() => account.BanUser(0), Throws.InstanceOf<NullReferenceException>().And.Property("ParamName").EqualTo("userId"));
-
-			// ReSharper restore AssignNullToNotNullAttribute
-		}
-
-		[Test]
-		[Ignore("TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки")]
 		public void GetBanned_AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			//
@@ -169,7 +152,6 @@ namespace VkNet.Tests.Categories.Account
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void GetInfo_AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			// TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки
@@ -215,10 +197,10 @@ namespace VkNet.Tests.Categories.Account
 			Assert.NotNull(settings);
 			Assert.IsNotEmpty(settings.Sections);
 			Assert.IsNotEmpty(settings.Settings);
+			Assert.IsNotEmpty(settings.SupportedCategories);
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void GetProfileInfo_AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			// TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки
@@ -275,7 +257,6 @@ namespace VkNet.Tests.Categories.Account
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void RegisterDevice_AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			// TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки
@@ -424,9 +405,6 @@ namespace VkNet.Tests.Categories.Account
 		}
 
 		[Test]
-		[Ignore("Падает на Linux")]
-
-		// TODO Падает на Linux
 		public void SaveProfileInfo_DateIsParsedCorrectly()
 		{
 			Url = "https://api.vk.com/method/account.saveProfileInfo";
@@ -437,7 +415,7 @@ namespace VkNet.Tests.Categories.Account
 					{
 						BirthDate = new DateTime(1984,
 								11,
-								150,
+								15,
 								0,
 								0,
 								0,
@@ -484,7 +462,6 @@ namespace VkNet.Tests.Categories.Account
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void SetInfo_AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			// TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки
@@ -498,7 +475,7 @@ namespace VkNet.Tests.Categories.Account
 			var account = new AccountCategory(Api);
 			Url = "https://api.vk.com/method/account.setInfo";
 
-			ReadJsonFile("Errors", "100");
+			ReadErrorsJsonFile(100);
 
 			Assert.That(() => account.SetInfo("intro", "-10"), Throws.InstanceOf<ParameterMissingOrInvalidException>());
 		}
@@ -550,7 +527,6 @@ namespace VkNet.Tests.Categories.Account
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void SetOffline_AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			var account =
@@ -577,7 +553,6 @@ namespace VkNet.Tests.Categories.Account
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void SetOnline_AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			// TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки
@@ -617,14 +592,14 @@ namespace VkNet.Tests.Categories.Account
 			ReadCategoryJsonPath(nameof(SetPrivacy));
 
 			// Act
-			var result = Api.Account.SetPrivacy("key", "value");
+			var result = Api.Account.SetPrivacy("key", "only_me");
 
 			// Assert
-			Assert.AreEqual("value", result);
+			Assert.That(result, Is.Not.Null);
+			Assert.AreEqual("only_me", result.Category);
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void SetSilenceMode_AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			// TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки
@@ -679,7 +654,6 @@ namespace VkNet.Tests.Categories.Account
 		}
 
 		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void UnbanUser_AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			// TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки
@@ -704,23 +678,6 @@ namespace VkNet.Tests.Categories.Account
 		}
 
 		[Test]
-		[Ignore("Будет переписываться")]
-		public void UnbanUser_IncorrectUserID_ThrowArgumentException()
-		{
-			// TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки
-			var account = new AccountCategory(Api);
-
-			// ReSharper disable AssignNullToNotNullAttribute
-			Assert.That(() => account.UnbanUser(-10), Throws.InstanceOf<ArgumentException>().And.Property("ParamName").EqualTo("userId"));
-
-			Assert.That(() => account.UnbanUser(0),
-				Throws.InstanceOf<NullReferenceException>().And.Property("ParamName").EqualTo("userId"));
-
-			// ReSharper restore AssignNullToNotNullAttribute
-		}
-
-		[Test]
-		[Ignore(TestIgnoreConstants.Excess)]
 		public void UnregisterDevice_AccessTokenInvalid_ThrowAccessTokenInvalidException()
 		{
 			// TODO как то я сомневаюсь в необходимости таких проверок, нужно закрыть инициализацию объектов только внутри библиотеки

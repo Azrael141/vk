@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using VkNet.Enums.SafetyEnums;
 using VkNet.Model.Attachments;
 using VkNet.Model.Keyboard;
+using VkNet.Model.Template;
 using VkNet.Utils;
 using VkNet.Utils.JsonConverter;
 
@@ -46,7 +47,7 @@ namespace VkNet.Model.RequestParams
 		/// Объект, описывающий клавиатуру для бота.
 		/// </summary>
 		/// <remarks>
-		/// Рекомендуется для построения использовать <see cref="IKeyboardBuilder"/>
+		/// Рекомендуется для построения использовать <see cref="IKeyboardBuilder" />
 		/// </remarks>
 		[JsonProperty("keyboard")]
 		public MessageKeyboard Keyboard { get; set; }
@@ -104,7 +105,8 @@ namespace VkNet.Model.RequestParams
 		public uint? StickerId { get; set; }
 
 		/// <summary>
-		/// Идентификатор сообщества (для сообщений сообщества с ключом доступа пользователя). положительное число
+		/// Идентификатор сообщества (для сообщений сообщества с ключом доступа
+		/// пользователя). положительное число
 		/// </summary>
 		[JsonProperty("group_id")]
 		public ulong GroupId { get; set; }
@@ -116,7 +118,8 @@ namespace VkNet.Model.RequestParams
 		public string Payload { get; set; }
 
 		/// <summary>
-		/// 1 — не создавать сниппет ссылки из сообщения флаг, может принимать значения 1 или 0, по умолчанию
+		/// 1 — не создавать сниппет ссылки из сообщения флаг, может принимать значения 1
+		/// или 0, по умолчанию
 		/// </summary>
 		[JsonProperty("dont_parse_links")]
 		public bool DontParseLinks { get; set; }
@@ -125,18 +128,19 @@ namespace VkNet.Model.RequestParams
 		/// Идентификатор капчи
 		/// </summary>
 		[JsonProperty("captcha_sid")]
-		[Obsolete(ObsoleteText.CaptchaNeeded)]
+		[Obsolete(ObsoleteText.CaptchaNeeded, true)]
 		public long? CaptchaSid { get; set; }
 
 		/// <summary>
 		/// текст, который ввел пользователь
 		/// </summary>
 		[JsonProperty("captcha_key")]
-		[Obsolete(ObsoleteText.CaptchaNeeded)]
+		[Obsolete(ObsoleteText.CaptchaNeeded, true)]
 		public string CaptchaKey { get; set; }
 
 		/// <summary>
-		/// 1 - отключить уведомление об упоминании в сообщении, может принимать значения 1 или 0, по умолчанию
+		/// 1 - отключить уведомление об упоминании в сообщении, может принимать значения 1
+		/// или 0, по умолчанию
 		/// </summary>
 		[JsonProperty("disable_mentions")]
 		public bool DisableMentions { get; set; }
@@ -147,6 +151,15 @@ namespace VkNet.Model.RequestParams
 		[JsonProperty("intent")]
 		[JsonConverter(typeof(SafetyEnumJsonConverter))]
 		public Intent Intent { get; set; }
+
+		/// <summary>
+		/// Объект, описывающий шаблон сообщения для бота.
+		/// </summary>
+		/// <remarks>
+		/// Рекомендуется для построения использовать <see cref="ITemplateBuilder" />
+		/// </remarks>
+		[JsonProperty("template")]
+		public MessageTemplate Template { get; set; }
 
 		/// <summary>
 		/// Привести к типу VkParameters.
@@ -169,14 +182,13 @@ namespace VkNet.Model.RequestParams
 				{ "forward_messages", p.ForwardMessages },
 				{ "keyboard", p.Keyboard != null ? JsonConvert.SerializeObject(p.Keyboard) : "" },
 				{ "sticker_id", p.StickerId },
-				{ "captcha_sid", p.CaptchaSid },
-				{ "captcha_key", p.CaptchaKey },
 				{ "peer_id", p.PeerId },
 				{ "payload", p.Payload },
 				{ "group_id", p.GroupId },
 				{ "dont_parse_links", p.DontParseLinks },
 				{ "disable_mentions", p.DisableMentions },
-				{ "intent", p.Intent }
+				{ "intent", p.Intent },
+				{ "template", p.Template != null ? JsonConvert.SerializeObject(p.Template) : ""}
 			};
 		}
 	}
